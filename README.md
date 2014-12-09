@@ -69,14 +69,17 @@ option:
 
 
 
-_________________________________________________________________________________________________________________________________________________________________________________________________________________
+_____________________________________________________________
 
-training & prediction:	./migma -i_train input_training_file  -o_mtd mtd_output_file>  -a <alphabet (1:protein, 2:DNA)> -alg <algorithm (default: EM, 1: EM, 2:Viterbi)> -or <mtd_order>  -i <input_file> -o <output_file>
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-in the example/ directory, the following command line
+training & prediction:
+(in the example/ directory, the following command line)
+_____________________________________________________________
+	
+    ./migma -i_train input_training_file  -o_mtd mtd_output_file>  -a <alphabet (1:protein, 2:DNA)> -alg <algorithm (default: EM, 1: EM, 2:Viterbi)> -or <mtd_order>  -i <input_file> -o <output_file>
 
-../migma -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1 -i 7tm_3.fa -o 7tm_3.pred  	      		(In Linux)
-../migma.exe -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1 -i 7tm_3.fa -o 7tm_3.pred     	(In Windows)
+
+   ../migma -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1 -i 7tm_3.fa -o 7tm_3.pred  	      		(In Linux)
+   ../migma.exe -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1 -i 7tm_3.fa -o 7tm_3.pred     	(In Windows)
 
 yields the following output files:
 7tm_3.mtd    - the MTD file that results from training from 7tm_3_TRAIN.txt
