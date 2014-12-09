@@ -40,7 +40,7 @@ inputs:
 
 _________
 
-training:		
+Training		
 _________
 
 Gerneral:
@@ -66,7 +66,7 @@ yields the following output files:
 
 ___________
 
-prediction:	
+Prediction	
 ___________
 
 General:
@@ -96,7 +96,7 @@ option:
 
 ______________________
 
-training & prediction:
+Training & Prediction:
 ______________________
 
 General:	
