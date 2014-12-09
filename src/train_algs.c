@@ -28,8 +28,8 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 	for(i=0; i<order; i++){	/* Initialize A[i][j][k], estim_a[i][j][k] = 0.00001 */
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){
-				A[i][j][k]=0.000000001;
-				a[i][j][k]=0.000000001;				
+				A[i][j][k]=0.000000000000001;
+				a[i][j][k]=0.000000000000001;				
 	} } }	 	 
 		
 	   	   
@@ -73,8 +73,8 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){ //printf("%.0lf\t",A[i][j][k]);
-			  if(sum<0.000000001)
-			      a[i][j][k] = 0.000000001; 
+			  if(sum<0.000001)
+			      a[i][j][k] = 0.000000000000001; 
 			  else
 			      a[i][j][k] = (double)A[i][j][k]/(double)sum;  
 			}
@@ -96,11 +96,11 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 
 		
 	for(i=0; i<order; i++){           /* Initialize Lambda, A[i][j][k], estim_a[i][j][k] = 0.00001 */
-		Lambda[i]=0.00001;
+		Lambda[i]=0.0000000000001;
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){	  	  	  	  	  
-				A[i][j][k]=0.000000001;
-				estim_a[i][j][k]=0.000000001;
+				A[i][j][k]=0.0000000000001;
+				estim_a[i][j][k]=0.0000000000001;
 	}}}  	   	 
 
 	#pragma omp parallel for private(i,j,k,zebgos,SIDi,SIDj) shared(trainseqArray,a,Lambda) reduction(+:em_sum, p, em)
@@ -147,8 +147,8 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){													
-				if(sum<0.000000001)
-				    estim_a[i][j][k] = 0.000000001;
+				if(sum<0.000001)
+				    estim_a[i][j][k] = 0.000000000000001;
 				else
 				    estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    	 	 	 	 	 	   	   	   	   	   	   	   	   	   
 			} 	  	  	  	  	  	  															 
@@ -161,58 +161,88 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 void viterbiAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int order, double a[order][diastasi][diastasi], double lambda[order], double Lambda[order], double estim_a[order][diastasi][diastasi] ){
 	
 	char zebgos[3];
-	double A[order][diastasi][diastasi], p=0, lamda_sum=0, sum=0,  max, eqp[order-1];
-	int i, j, k, SIDi=-1, SIDj=-1, thesi, eqcount, eqSIDiA[order-1], eqSIDjA[order-1], equalthesi[order-1], SIDiA=-1, SIDjA=-1;
+	double A[order][diastasi][diastasi], p=0.0, lamda_sum=0.0, sum=0.0,  max, eqp[order];
+	int i, j, k, SIDi=-1, SIDj=-1, thesi, eqcount, eqSIDiA[order], eqSIDjA[order], equalthesi[order], SIDiA=-1, SIDjA=-1;
 	
 
 		
 	for(i=0; i<order; i++){           /* Initialize Lambda, A[i][j][k], estim_a[i][j][k] = 0.00001 */
-		Lambda[i]=0.00001;
+		Lambda[i]=0.0000000000001; 					//printf("lag %d:\n",i);
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){	  	  	  	  	  
-				A[i][j][k]=0.000000001;
-				estim_a[i][j][k]=0.000000001;
+				A[i][j][k]=0.0000000000001;
+				estim_a[i][j][k]=0.000000000000001;		//printf("%lf ",a[i][j][k]);
 	}}}  	   	 
 
 	
 	for (j = 1; j < seq_num*2; j+=2){
-		for (i = order; i < strlen(trainseqArray[j]); i++)
+		for (i = 1; i < strlen(trainseqArray[j]); i++)
 		{
-			max=0; thesi=0; eqcount=0; 
-						
-			for(k=0; k<order; k++)
-			{													
-				sprintf(zebgos,"%c%c",trainseqArray[j][i-k-1], trainseqArray[j][i]); 
-				abc(&SIDi,&SIDj,alphabet,zebgos);           		 			 	 	 	 	 	 	 	 
+			max=0.0; thesi=0; eqcount=0; 					
+				
+			if(i<order){
+				for(k=0; k<i; k++)
+				{					
+					sprintf(zebgos,"%c%c",trainseqArray[j][i-k-1], trainseqArray[j][i]); 
+					abc(&SIDi,&SIDj,alphabet,zebgos);           		 			 	 	 	 	 	 	 	 
 									 				
-				p=a[k][SIDi][SIDj]*lambda[k]; 									 
+					p=a[k][SIDi][SIDj]*lambda[k]; 		//printf("%s %lf  %lf\n",zebgos, a[k][SIDi][SIDj],lambda[k] );							 
 					
-			 	if(p>max){
-					max=p;
-					thesi=k; 	
-					SIDiA= SIDi;
-					SIDjA= SIDj;
+					if(p>max ){
+					      max=p; 
+					      thesi=k; 	
+					      SIDiA= SIDi;
+					      SIDjA= SIDj;
+					}
+					else if(p==max && p>0.0){ 		//printf("E: %s %lf %lf\n",zebgos, max, p);
+					      equalthesi[eqcount]=k;
+					      eqp[eqcount]=p;
+					      eqSIDiA[eqcount]= SIDi;
+					      eqSIDjA[eqcount]= SIDj;
+					      eqcount++;
+					} 									  													 					  										
 				}
-					/*else if(p==max){
-						equalthesi[eqcount]=k;
-						eqp[eqcount]=p;
-						eqSIDiA[eqcount]= SIDi;
-						eqSIDjA[eqcount]= SIDj;
-						eqcount++;
-					}*/								  
+		     	}
+		     	else{	
+				for(k=0; k<order; k++)
+				{													
+					sprintf(zebgos,"%c%c",trainseqArray[j][i-k-1], trainseqArray[j][i]); 
+					abc(&SIDi,&SIDj,alphabet,zebgos);           		 			 	 	 	 	 	 	 	 
+									 				
+					p=a[k][SIDi][SIDj]*lambda[k]; 		//printf("%s %lf  %lf\n",zebgos, a[k][SIDi][SIDj],lambda[k] );							 
+					
+					if(p>max ){
+					      max=p; 
+					      thesi=k; 	
+					      SIDiA= SIDi;
+					      SIDjA= SIDj;
+					}
+					else if(p==max && p>0.0){  		//printf("E: %s %lf %lf\n",zebgos, max, p);
+					      equalthesi[eqcount]=k;
+					      eqp[eqcount]=p;
+					      eqSIDiA[eqcount]= SIDi;
+					      eqSIDjA[eqcount]= SIDj;
+					      eqcount++;
+					}
+				}
+				
+				//A[thesi][SIDiA][SIDjA]= A[thesi][SIDiA][SIDjA]+1;	 		//printf(" %lf \n",A[thesi][SIDiA][SIDjA]);								  	  	  	  	  	  	  	  	  	  	  	  	  	  
+				//Lambda[thesi] = Lambda[thesi]+1;
 			}
 			
 			 	 	 	
 			A[thesi][SIDiA][SIDjA]= A[thesi][SIDiA][SIDjA]+1;	 		//printf(" %lf \n",A[thesi][SIDiA][SIDjA]);								  	  	  	  	  	  	  	  	  	  	  	  	  	  
 			Lambda[thesi] = Lambda[thesi]+1;
-
-			for(k=0; k<order-1; k++){
+			
+			if(eqcount!=0){ 
+			  for(k=0; k<eqcount; k++){ 
 				if( max == eqp[k] ){
 					A[equalthesi[k]][eqSIDiA[k]][eqSIDjA[k]]= A[equalthesi[k]][eqSIDiA[k]][eqSIDjA[k]]+1;	 		//printf(" %lf \n",A[thesi][SIDiA][SIDjA]);																	  	  	  	  	  	  	  	  	  	  	  	  	  	  
 			   		Lambda[equalthesi[k]] = Lambda[equalthesi[k]]+1;       							//printf("e %d \n", equalthesi[k]); 
 				}
 				equalthesi[k]=0;
 				eqp[k]=0;
+			  }
 			}
 		}																																								
 	}	
@@ -221,20 +251,23 @@ void viterbiAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, i
 	for(i=0; i<order; i++){  lamda_sum=lamda_sum+ Lambda[i];  }	/* Create Lambda array */				
 	for(i=0; i<order; i++){  Lambda[i]=(Lambda[i]/lamda_sum);  } 
 
-						
-	for(i=0; i<order; i++){	/* Create a array */																				 	    
+	puts("");					
+	for(i=0; i<order; i++){	/* Create a array */		//printf("lag %d:\n",i);																				 	    
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){													
-				if(sum<0.000000001)
-				    estim_a[i][j][k] = 0.000000001;
+				if(sum<0.00001)
+				    estim_a[i][j][k] = 0.000000000000001;
 				else
-				    estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    	 	 	 	 	 	   	   	   	   	   	   	   	   	   
-			} 	  	  	  	  	  	  															 
-			sum=0;										      	   	    															 
-		}			   																											 	 	   
+				    estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    
+				//printf("%lf| %lf %lf - ", (double) estim_a[i][j][k], A[i][j][k], sum);
+			}//puts("");	  															 
+			sum=0.0;										      	   	    															 
+		}//puts("");			   																											 	 	   
 	}
 }
+
+
 
 void gradientAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int order, double a[order][diastasi][diastasi], double lambda[order], double estim_Lambda[order], double estim_a[order][diastasi][diastasi] ){
 	
@@ -336,20 +369,33 @@ void score( char **trainseqArray, int seq_num, int alphabet, int diastasi, int o
 	#pragma omp parallel for private(i,j,k) shared(trainseqArray,a,Lambda) reduction(+:Score1,Score2,Score3)
 	for (j = 1; j < seq_num*2; j+=2){
 		Score2=0;
-		for (i = order; i < strlen(trainseqArray[j]); i++)
+		for (i = 1; i < strlen(trainseqArray[j]); i++)
 		{
-			Score1=0;
-			for(k=0; k<order; k++){
-				int SIDi=0, SIDj=0;
+			Score1=0.0;
+			if(i<order){
+			     for(k=0; k<i; k++){
+				int SIDi=-1, SIDj=-1;
 				char zebgos[3];	
 								
 				sprintf(zebgos,"%c%c",trainseqArray[j][i-k-1], trainseqArray[j][i]);
 				abc(&SIDi,&SIDj,alphabet,zebgos);           		 	 	 	 	 	 	 	 
 				 
-				Score1=Score1+Lambda[k]*a[k][SIDi][SIDj];   		 
+				Score1=Score1+Lambda[k]*a[k][SIDi][SIDj]; 
+			    }
+			}
+			else{
+			    for(k=0; k<order; k++){
+				int SIDi=-1, SIDj=-1;
+				char zebgos[3];	
+								
+				sprintf(zebgos,"%c%c",trainseqArray[j][i-k-1], trainseqArray[j][i]);
+				abc(&SIDi,&SIDj,alphabet,zebgos);           		 	 	 	 	 	 	 	 
+				 
+				Score1=Score1+Lambda[k]*a[k][SIDi][SIDj]; 
+			    }
 			}											  													  						  										
 			
-			if(Score1< 0.000000001)
+			if(Score1< 0.0001)
 			      Score2=(Score2)-4;
 			else
 			      Score2=(Score2)+(log(Score1));
@@ -411,10 +457,10 @@ void trainMTD( char **trainseqArray, int seq_num, char *model, int alphabet, int
 			}															  
 		}
 		
-		if(alg_option==1){ emAlg(trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }	/* 1:EM 2:Viterbi */
-	        else if(alg_option==2){ viterbiAlg(trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }
-		else if(alg_option==3){ puts("Gradient is running!!!"); gradientAlg(trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a);  }   		/* 3:Gradient */
-		else{ emAlg(trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }				/* default:EM */
+		if(alg_option==1){            emAlg( trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }	/* 1:EM 2:Viterbi */
+	        else if(alg_option==2){  viterbiAlg( trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }
+		else if(alg_option==3){ gradientAlg( trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }   		/* 3:Gradient */
+		else{ 			      emAlg( trainseqArray, seq_num, alphabet, dimension, order, estim_a, estim_Lambda, Lambda, a ); }				/* default:EM */
 		
 		score(trainseqArray, seq_num, alphabet, dimension, order, Lambda, a, &Score ); 	 	 	
 		printf("Iteration %d: %lf\n",flag, Old_Score); 	 	 	    
