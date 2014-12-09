@@ -3,24 +3,17 @@
 
 CC = gcc -O2 -fopenmp
 CFLAGS = -c -Wall
-# add -Wall to see most warning messages
-SOURCES= train.c predict.c
+SOURCES= src/migma.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE= migma 
-#train predict
 
 
 .PHONY: all clean wipe depend
 
 all: $(SOURCES) $(EXECUTABLE)
 
-migma: migma.o
+migma: src/migma.o
 	$(CC) migma.o -o migma -lm -lz 
-
-#train: train.o			
-#	$(CC) train.o -o train -lm -lz 
-#predict: predict.o			
-#	$(CC) predict.o -o predict -lm -lz 
 
 .c.o:
 	$(CC) $(CFLAGS) $< 
@@ -34,8 +27,6 @@ clean:
 
 wipe: clean
 	-\rm -f migma 
-
-	#train predict
 	
 
 
