@@ -38,6 +38,7 @@ inputs:
 (you can copy these to a new directory, say example2, and compare results)
 
 
+____________________________________________________________________________________________________________________________________________________________________
 
 training:		./migma -i_train <input_training_file>  -o_mtd <mtd_output_file>  -a <alphabet (1:protein, 2:DNA) > -alg <algorithm (default: EM, 1: EM, 2:Viterbi)> -or <order> 
 ____________________________________________________________________________________________________________________________________________________________________
@@ -50,6 +51,8 @@ yields the following output files:
 7tm_3.mtd    - the MTD file that results from training from 7tm_3_TRAIN.txt
 
 
+
+_________________________________________________________________________________________________________________________
 
 prediction:	./migma -m <mtd_file> -i <input_file> -o <output_file>
 _________________________________________________________________________________________________________________________
@@ -64,6 +67,9 @@ yields the following output file:
 option:
   -p 	- when used it also yields a second output file which contains the predisctions of the amino acid probabilities 
 
+
+
+_________________________________________________________________________________________________________________________________________________________________________________________________________________
 
 training & prediction:	./migma -i_train <input_training_file>  -o_mtd <mtd_output_file>  -a <alphabet (1:protein, 2:DNA) > -alg <algorithm (default: EM, 1: EM, 2:Viterbi)> -or <mtd_order>  -i <input_file> -o <output_file>
 _________________________________________________________________________________________________________________________________________________________________________________________________________________
