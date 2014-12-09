@@ -1,7 +1,7 @@
 MIGMA
 =====
 
-Written by: Maria Chatzou
+Written by: Maria Chatzou & Pantelis Bagos
 
 
 Description
