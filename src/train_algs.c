@@ -28,8 +28,8 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 	for(i=0; i<order; i++){	/* Initialize A[i][j][k], estim_a[i][j][k] = 0.00001 */
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){
-				A[i][j][k]=0.000000000000001;
-				a[i][j][k]=0.000000000000001;				
+				A[i][j][k]=0.000001;
+				a[i][j][k]=0.000001;				
 	} } }	 	 
 		
 	   	   
@@ -73,9 +73,6 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){ //printf("%.0lf\t",A[i][j][k]);
-			  if(sum<0.000001)
-			      a[i][j][k] = 0.000000000000001; 
-			  else
 			      a[i][j][k] = (double)A[i][j][k]/(double)sum;  
 			}
 			sum=0;	      	   	    
@@ -96,11 +93,11 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 
 		
 	for(i=0; i<order; i++){           /* Initialize Lambda, A[i][j][k], estim_a[i][j][k] = 0.00001 */
-		Lambda[i]=0.0000000000001;
+		Lambda[i]=0.000001;
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){	  	  	  	  	  
-				A[i][j][k]=0.0000000000001;
-				estim_a[i][j][k]=0.0000000000001;
+				A[i][j][k]=0.000001;
+				estim_a[i][j][k]=0.000001;
 	}}}  	   	 
 
 	#pragma omp parallel for private(i,j,k,zebgos,SIDi,SIDj) shared(trainseqArray,a,Lambda) reduction(+:em_sum, p, em)
@@ -147,9 +144,6 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){													
-				if(sum<0.000001)
-				    estim_a[i][j][k] = 0.000000000000001;
-				else
 				    estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    	 	 	 	 	 	   	   	   	   	   	   	   	   	   
 			} 	  	  	  	  	  	  															 
 			sum=0;										      	   	    															 
