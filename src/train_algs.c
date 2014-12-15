@@ -44,11 +44,11 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 	else{	printf("Error: wrong choise of Lambda. Write 1:Lambda=(1/order)  2:Lambda=((order-i)/par)  ");	}
 	
 	
-	//int chunk=1;
+	int chunk=200;
 	/**
 	 * Create A array
 	 */
-	#pragma omp parallel for private(i,j,k) shared(trainseqArray,A) //schedule(dynamic,chunk)
+	#pragma omp parallel for private(i,j,k) shared(trainseqArray,A) schedule(dynamic,chunk)
 	for (i = 1; i < seq_num*2; i+=2){
 	    for (j = order; j < strlen(trainseqArray[i]); j++){
 	      for (k = 0; k < order; k++)
@@ -100,7 +100,9 @@ void emAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, int or
 				estim_a[i][j][k]=0.000001;
 	}}}  	   	 
 
-	#pragma omp parallel for private(i,j,k,zebgos,SIDi,SIDj) shared(trainseqArray,a,Lambda) reduction(+:em_sum, p, em)
+	int chunk=200;
+	
+	#pragma omp parallel for private(i,j,k,zebgos,SIDi,SIDj) shared(trainseqArray,a,Lambda) reduction(+:em_sum, p, em) schedule(dynamic,chunk)
 	for (j = 1; j < seq_num*2; j+=2){
 		for (i = order; i < strlen(trainseqArray[j]); i++)
 		{
@@ -355,8 +357,9 @@ void score( char **trainseqArray, int seq_num, int alphabet, int diastasi, int o
 		
 	double Score1=0.0, Score2=0.0, Score3=0.0;
 	int i, j, k;
-			
-	#pragma omp parallel for private(i,j,k) shared(trainseqArray,a,Lambda) reduction(+:Score1,Score2,Score3)
+	
+	int chunk=200;
+	#pragma omp parallel for private(i,j,k) shared(trainseqArray,a,Lambda) reduction(+:Score1,Score2,Score3) schedule(dynamic,chunk)
 	for (j = 1; j < seq_num*2; j+=2){
 		Score2=0;
 		for (i = 1; i < strlen(trainseqArray[j]); i++)
