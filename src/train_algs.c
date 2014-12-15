@@ -44,7 +44,7 @@ void initialize( char **trainseqArray,  int seq_num, int alphabet, int diastasi,
 	else{	printf("Error: wrong choise of Lambda. Write 1:Lambda=(1/order)  2:Lambda=((order-i)/par)  ");	}
 	
 	
-	int chunk=1;
+	//int chunk=1;
 	/**
 	 * Create A array
 	 */
@@ -167,11 +167,11 @@ void viterbiAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, i
 
 		
 	for(i=0; i<order; i++){           /* Initialize Lambda, A[i][j][k], estim_a[i][j][k] = 0.00001 */
-		Lambda[i]=0.0000000000001; 					//printf("lag %d:\n",i);
+		Lambda[i]=1; 					//printf("lag %d:\n",i);
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){	  	  	  	  	  
-				A[i][j][k]=0.0000000000001;
-				estim_a[i][j][k]=0.000000000000001;		//printf("%lf ",a[i][j][k]);
+				A[i][j][k]=1;
+				estim_a[i][j][k]=1;		//printf("%lf ",a[i][j][k]);
 	}}}  	   	 
 
 	
@@ -250,16 +250,12 @@ void viterbiAlg(char **trainseqArray, int seq_num, int alphabet, int diastasi, i
 			
 	for(i=0; i<order; i++){  lamda_sum=lamda_sum+ Lambda[i];  }	/* Create Lambda array */				
 	for(i=0; i<order; i++){  Lambda[i]=(Lambda[i]/lamda_sum);  } 
-
-	puts("");					
+					
 	for(i=0; i<order; i++){	/* Create a array */		//printf("lag %d:\n",i);																				 	    
 		for(j=0; j<diastasi; j++){
 			for(k=0; k<diastasi; k++){  sum=sum+ A[i][j][k];  } 
 			for(k=0; k<diastasi; k++){													
-				if(sum<0.00001)
-				    estim_a[i][j][k] = 0.000000000000001;
-				else
-				    estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    
+				estim_a[i][j][k] = (double)A[i][j][k]/(double)sum;    
 				//printf("%lf| %lf %lf - ", (double) estim_a[i][j][k], A[i][j][k], sum);
 			}//puts("");	  															 
 			sum=0.0;										      	   	    															 

@@ -19,6 +19,7 @@
 
 #define PROT_LENGTH 20
 #define DNA_LENGTH 4
+#define FILE_NAME_LEN 2000
 
 #include "negative_models/uniprot_sprot.mtd_1.h"
 #include "negative_models/uniprot_sprot.mtd_2.h"
@@ -43,18 +44,19 @@
 
 
 
-#define PROT_LENGTH 20
-#define DNA_LENGTH 4
-
-
 int main ( int argc, char *argv[] )
 {  
-		int alphabet, order, dimension, alg=0;		
+		int alphabet=-1, order=-1, dimension, alg=0;		
 		int optFlag=0, runflag=0, i, I, J, option=0, seq_num=0;	
 	        char *model_name, *file_name, *train_file_name, *out_file, *out_mtd_file;
 	        char **testseqArray,  **trainseqArray;
 
-
+		model_name = malloc(sizeof(char) * (FILE_NAME_LEN));
+		file_name = malloc(sizeof(char) * (FILE_NAME_LEN));
+		train_file_name = malloc(sizeof(char) * (FILE_NAME_LEN));
+		out_file = malloc(sizeof(char) * (FILE_NAME_LEN));
+		out_mtd_file = malloc(sizeof(char) * (FILE_NAME_LEN));
+		
 		switch (argc)
     		{
     			 /**
@@ -77,9 +79,9 @@ int main ( int argc, char *argv[] )
    			
 			fprintf(stderr,"  -m\t\t<mtd_file> the mtd model file.\n");
 			fprintf(stderr,"  -i\t\t<input_file> the file containing the sequences,\n\t\t either DNA or protein. The file should be in FASTA format.\n");
-			fprintf(stderr,"  -i_train\t<input_training_file> the file containing the sequences that\n\t\twill be used for training, either DNA or protein.The file should\n\t\tbe in FASTA format.\n");
+			fprintf(stderr,"  -itrain\t<input_training_file> the file containing the sequences that\n\t\twill be used for training, either DNA or protein.The file should\n\t\tbe in FASTA format.\n");
 			fprintf(stderr,"  -o\t\t<output_file> the output prediction file.\n");
-			fprintf(stderr,"  -o_mtd\t<mtd_output_file> the mtd output file.\n");
+			fprintf(stderr,"  -om\t<mtd_output_file> the mtd output file.\n");
 			fprintf(stderr,"  -a\t\t<alphabet> the alphabet to be used\n\t\t( use: 1 for protein sequences | 2 for DNA sequences ).\n");
 			fprintf(stderr,"  -or\t\t<mtd_order> the order of the mtd model.\n");
 			fprintf(stderr,"  -alg\t\t<algorithm> (optional) the training algorithm\n\t\t(use: 1 for EM (default) | 2 for Viterbi | 3 for Gradient )\n");
@@ -146,11 +148,11 @@ int main ( int argc, char *argv[] )
 			for ( i = 1; i < argc; i++ )
 			{
 			      runflag=2;
-			      if (!strcmp(argv[i], "-i_train")){
+			      if (!strcmp(argv[i], "-itrain")){
 				train_file_name = argv[++i];
 				optFlag++;
 			      }
-			      if (!strcmp(argv[i], "-o_mtd")){
+			      if (!strcmp(argv[i], "-om")){
 				out_mtd_file = argv[++i];
 				optFlag++;
 			      }
@@ -173,11 +175,11 @@ int main ( int argc, char *argv[] )
 			for ( i = 1; i < argc; i++ )
 			{
 			      runflag=2;
-			      if (!strcmp(argv[i], "-i_train")){
+			      if (!strcmp(argv[i], "-itrain")){
 				train_file_name = argv[++i];
 				optFlag++;
 			      }
-			      if (!strcmp(argv[i], "-o_mtd")){
+			      if (!strcmp(argv[i], "-om")){
 				out_mtd_file = argv[++i];
 				optFlag++;
 			      }
@@ -211,7 +213,7 @@ int main ( int argc, char *argv[] )
 				file_name = argv[++i];
 				optFlag++;
 			      }
-			      if (!strcmp(argv[i], "-i_train")){
+			      if (!strcmp(argv[i], "-itrain")){
 				train_file_name = argv[++i]; 
 				optFlag++;
 			      }
@@ -219,7 +221,7 @@ int main ( int argc, char *argv[] )
 				out_file = argv[++i];
 				optFlag++;
 			      }
-			      if (!strcmp(argv[i], "-o_mtd")){
+			      if (!strcmp(argv[i], "-om")){
 				out_mtd_file = argv[++i];
 				model_name = out_mtd_file;
 				optFlag++;
@@ -289,10 +291,10 @@ int main ( int argc, char *argv[] )
 		if( runflag==1 || runflag==3 )
 		{
 		  
-		  /**
-		   * Predict mode 
-		   */
-		    printf("%s   \n",model_name);
+		   /**
+		    * Predict mode 
+		    */
+		
 		    if (fopen(model_name, "r") == NULL)  
 		    { 
         		perror("\nError: failed to open <mtd_file> for reading!");
@@ -337,15 +339,11 @@ int main ( int argc, char *argv[] )
 				    null_lambda[i] = lambda_2[i];
 				}
 				if(order==3){ 
-				  printf("%lf\n\n", a_3[1][0][0]); 
-				 for(i=0; i<order; i++){
-				   for(j=0; j<J; j++){
-				     for(k=0; k<I; k++){
+				 for(i=0; i<order; i++)
+				   for(j=0; j<J; j++)
+				     for(k=0; k<I; k++)
 				       null_a[i][j][k]=a_3[i][j][k];
-				       printf("%.8lf ", null_a[i][j][k]);
-				     }puts("");
-				   }puts("");
-				 }
+			
 				   for(i=0; i<order; i++) 
 				    null_lambda[i] = lambda_3[i]; 
 				}
@@ -519,21 +517,7 @@ int main ( int argc, char *argv[] )
 				  for(i=0; i<order; i++) 
 				    null_lambda[i] = lambda_20[i];
 				}
-				  
-				  for(i=0; i<order; i++){
-				    null_lambda[i] = lambda_2[i]; printf("%lf ",null_lambda[i]);  }puts("");
-				
-				//char null_model_name[5000];     
-		       		//sprintf(null_model_name,"/home/teo/Desktop/MTD_code_latest_version/negative_models/uniprot_sprot.mtd_%d",order);
-		       		
-		   		//read_modelFile(null_model_name, order, I, J, null_lambda, null_a);	/* Read null MTD model */	
 		    }
-		    		
-	
-		
-		
-		    /*int k;
-		    for(k=0; k<order; k++){        printf("%lf ",lambda[k]);  }puts("");*/
 
 	  	  
 		    if(I==4 && J==4){ /* Check if the alphabet is definied correctly */

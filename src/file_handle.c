@@ -95,10 +95,13 @@ char **readFasta( char *in, int alphabet, int *seqNum)
 
 void aa_search(char px, int *SID){
 			
-	char AB[]="ARNDCEQGHILKMFPSTWYV";				
+	char AB[]="AaRrNnDdCcEeQqGgHhIiLlKkMmFfPpSsTtWwYyVv";				
 	char *pos = strchr(AB, px);	
 		
-	if( pos ){ *SID = pos-AB;  }
+	if( pos ){
+	    if( (pos-AB)%2==0 ){ *SID= (pos-AB)/2; }
+	    else{ *SID= ((pos-1-AB)/2);  }	
+	}
 	else if(px=='B'){  (*SID)=3;  }
 	else if(px=='Z'){  (*SID)=7;  }
 	else{
@@ -114,8 +117,9 @@ void dna_search(char px, int *SID){
 	char AB[]="AaCcGgTt";				
 	char *pos = strchr(AB, px);	
 		
-	if( pos ){   if( (pos-AB)%2==0 ){ *SID= (pos-AB)/2; }
-		   else{ *SID= ((pos-1-AB)/2);  }	
+	if( pos ){   
+	    if( (pos-AB)%2==0 ){ *SID= (pos-AB)/2; }
+	    else{ *SID= ((pos-1-AB)/2);  }
 	}
 	else{
 		printf("Error: unknown letter ' %c ' exists.\n ",px);
