@@ -45,17 +45,17 @@ _________
 
 Gerneral:
 
-    ./migma -i_train <input_training_file> -o_mtd <mtd_output_file>  -a <alphabet (1:protein, 2:DNA)> -alg <algorithm (default: EM, 1: EM, 2:Viterbi)> -or <order> 
+    ./migma -itrain <input_training_file>  -om <mtd_output_file>  -a <alphabet (1:protein, 2:DNA)>  -alg <algorithm (default: EM, 1: EM, 2:Viterbi)>  -or <order> 
 
 (in the example/ directory, type the following command line)
 
 In Linux:
 
-    ../migma -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1
+    ../migma -itrain 7tm_3_TRAIN.fa -om 7tm_3.mtd -a 1 -or 20 -alg 1
 
 In Windows:
 
-    ../migma.exe -i_train 7tm_3_TRAIN.fa -o_mtd 7tm_3.mtd -a 1 -or 20 -alg 1
+    ../migma.exe -itrain 7tm_3_TRAIN.fa -om 7tm_3.mtd -a 1 -or 20 -alg 1
 
 
 yields the following output files:
